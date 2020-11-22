@@ -291,7 +291,7 @@ end
 	-- EventHandlers
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --S_EVENT_SHOT = {id = 1,  time = Time,  initiator = Unit,  weapon = Weapon}
-function   	:onEvent(Cargo_Drop_Event)
+function Hercules_Cargo.Hercules_Cargo_Drop_Events:onEvent(Cargo_Drop_Event)
 		if Cargo_Drop_Event.id == world.event.S_EVENT_SHOT or Cargo_Drop_Event.id == 1 then
 			GT_DisplayName = Weapon.getDesc(Cargo_Drop_Event.weapon).typeName:sub(15, -1)--Remove "weapons.bombs." from string
 			 --trigger.action.outTextForCoalition(coalition.side.BLUE, string.format("Cargo_Drop_Event: %s", Weapon.getDesc(Cargo_Drop_Event.weapon).typeName), 10)
