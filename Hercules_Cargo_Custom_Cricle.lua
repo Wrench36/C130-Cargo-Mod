@@ -42,7 +42,7 @@ local CargoStaticGroupID = 0
 
 Hercules_Cargo.types = {
 	["ATGM M1045 HMMWV TOW [7183lb]"] = {['name'] = "M1045 HMMWV TOW", ['container'] = true},
-	["APC M1043 HMMWV Armament [7023lb]"] = {['name'] =  "M1043 HMMWV Armament", ['container'] = true},
+	["APC M1043 HMMWV Armament [7023lb]"] = {['name'] =  "M1043 HMMWV Armament", ['container'] = true,},
 	["SAM Avenger M1097 [7200lb]"] = {['name'] =  "M1097 Avenger", ['container'] = true},
 	["APC Cobra [10912lb]"] = {['name'] =  "Cobra", ['container'] = true},
 	["APC M113 [21624lb]"] = {['name'] =  "M-113", ['container'] = true},
@@ -89,20 +89,39 @@ Hercules_Cargo.types = {
 
 --added by wrench
 hercCargoMenu = missionCommands.addSubMenu('CargoTypes' , nil)
---[[
-	local hercCargoType = '2B11 mortar'
-	local hercCargoNum = 8
-	missionCommands.addCommand('Howitzer', hercCargoMenu, function() hercCargoType = '2A18M' hercCargoNum = 3 end,nil)
-	missionCommands.addCommand('Mortar', hercCargoMenu, function() hercCargoType = '2B11 mortar' hercCargoNum = 8 end,nil)
-	missionCommands.addCommand('M-1 Abrams', hercCargoMenu, function() hercCargoType = 'M-1 Abrams' hercCargoNum = 1 end,nil)
-	missionCommands.addCommand('MLRS', hercCargoMenu, function() hercCargoType = 'MLRS' hercCargoNum = 1 end,nil)
-	missionCommands.addCommand('M-109', hercCargoMenu, function() hercCargoType = 'M-109' hercCargoNum = 1 end,nil)
-	missionCommands.addCommand('FOB Crate', hercCargoMenu, function() hercCargoType = 'konteiner_red1' hercCargoNum = 1 end,nil)
-]]
+function inTable(table, element, Log)
+	if Log then
+		myLog:msg('searching for| '.. element .. ' |in table.')
+	end
+	for _, value in pairs(table) do
+	if Log then
+		myLog:msg('value = ')
+		myLog:msg(value)
+		myLog:msg('element = ')
+		myLog:msg(element)
+		myLog:msg('does ' .. value .. ' == ' .. element .. '?')
+	end
+		if value == element then
+		if Log then
+			myLog:msg('yes, returning true.')
+		end
+			return true
+		end
+		if Log then
+			myLog:msg('no, try next item.')
+		end
+	end
+	if Log then
+		myLog:msg('no match found, return false.')
+	end
+	return false
+end
 --end of wrench
 
 function Hercules_Cargo.Cargo_SpawnGroup(Cargo_Drop_initiator, Cargo_Drop_Position, Cargo_Type_name, CargoHeading, Cargo_Country)
 	myLog:msg('Cargo_SpawnGroup')
+	initiatorCoa = Cargo_Drop_initiator:getCoalition()
+	myLog:msg(initiatorCoa)
 	Cargo_Drop_initiator = Cargo_Drop_initiator:getGroup()
 	CargoUnitID = CargoUnitID + 1
 	CargoGroupID = CargoGroupID + 1
@@ -179,7 +198,20 @@ function Hercules_Cargo.Cargo_SpawnGroup(Cargo_Drop_initiator, Cargo_Drop_Positi
 	end
 	--end of wrench
 	
-	coalition.addGroup(Cargo_Country, Group.Category.GROUND, Cargo)
+	spawnGrp = coalition.addGroup(Cargo_Country, Group.Category.GROUND, Cargo)
+	--CTLD vehicle hook
+	if ctld and initiatorCoa == 2 then
+		myLog:msg('attempting ctld')
+		if inTable(ctld.vehiclesForTransportBLUE, Cargo_Type_name) then
+			myLog:msg('adding unit ' .. spawnGrp:getName() .. ' to ctld table')
+			table.insert(ctld.droppedVehiclesBLUE, spawnGrp:getName())
+		end
+	end
+	if ctld and initiatorCoa == 1 then
+		if inTable(ctld.vehiclesForTransportRED, Cargo_Type_name) then
+			table.insert(ctld.vehiclesForTransportRED, spawnGrp:getName())
+		end
+	end
 end
 
 function Hercules_Cargo.makeCirlce(pos,number)
