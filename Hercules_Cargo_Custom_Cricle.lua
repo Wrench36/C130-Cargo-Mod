@@ -201,9 +201,7 @@ function Hercules_Cargo.Cargo_SpawnGroup(Cargo_Drop_initiator, Cargo_Drop_Positi
 	spawnGrp = coalition.addGroup(Cargo_Country, Group.Category.GROUND, Cargo)
 	--CTLD vehicle hook
 	if ctld and initiatorCoa == 2 then
-		myLog:msg('attempting ctld')
 		if inTable(ctld.vehiclesForTransportBLUE, Cargo_Type_name) then
-			myLog:msg('adding unit ' .. spawnGrp:getName() .. ' to ctld table')
 			table.insert(ctld.droppedVehiclesBLUE, spawnGrp:getName())
 		end
 	end
