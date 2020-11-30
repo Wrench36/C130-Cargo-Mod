@@ -88,7 +88,6 @@ Hercules_Cargo.types = {
 }
 
 --added by wrench
-hercCargoMenu = missionCommands.addSubMenu('CargoTypes' , nil)
 function inTable(table, element, Log)
 	if Log then
 		myLog:msg('searching for| '.. element .. ' |in table.')
@@ -483,7 +482,8 @@ function Hercules_Cargo.birthEvent:onEvent(event)
 			grpTab['key'] = #Hercules_Cargo.carrierGroups + 1
 			
 			table.insert(Hercules_Cargo.carrierGroups,grpTab)
-
+			
+			local hercCargoMenu = missionCommands.addSubMenuForGroup(grpTab['object']['id_'], 'CargoTypes' , nil)
 			missionCommands.addCommandForGroup(grpTab['object']['id_'], 'Howitzer', hercCargoMenu, function() Hercules_Cargo.setType(grpTab['key'],'2A18M',3) end,nil)
 			missionCommands.addCommandForGroup(grpTab['object']['id_'], 'MLRS', hercCargoMenu, function() Hercules_Cargo.setType(grpTab['key'],'MLRS',1) end,nil)
 			missionCommands.addCommandForGroup(grpTab['object']['id_'], 'Mortar', hercCargoMenu, function() Hercules_Cargo.setType(grpTab['key'],'2B11 mortar',8) end,nil)
